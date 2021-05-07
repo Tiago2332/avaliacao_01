@@ -409,3 +409,10 @@ cursos_prouni%>%
 Segundo a tabela acima que apresenta os cursos distintos e possui 296
 linhas, é possivel dizer que possui 296 cursos distintos na variável
 nome
+
+***Questão 10***
+
+Observando os gráficos, é possível perceber que não há valores extremos,
+os dados apresentados estão agrupados, tendo assim, uma distribuição
+simétrica, com isso a média seria uma otima médida de posição para
+servir de referencia para os dados apresentados nos gráfico.
