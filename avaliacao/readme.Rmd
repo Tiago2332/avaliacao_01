@@ -1,0 +1,250 @@
+---
+title: "Avaliação I"
+author: "Tiago dos Santos Alves </br>"
+date: "Introdução a Estatistica 2020.1"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+---
+
+_**Questão 1**_
+
+**(a)** 
+
+```{r, message=FALSE}
+peixes_rio <- read_csv("arquivos/brutos/peixes_rio_madeira.csv")
+
+peixes_rio %>%
+  count(ordem) %>%
+  arrange(n)
+
+```
+
+
+**(b)** Observando a tabela de freqência, pude perceber que a ordem de peixe que mais aparece é a Characiformes tendo 64.356 observações.
+
+
+**(c)** Não foram identificados na variável ordem 17 peixes.
+
+
+_**Questão 2**_
+
+```{r, message=FALSE}
+peixes_rio <- read_csv("arquivos/brutos/peixes_rio_madeira.csv")
+
+peixes_rio %>%
+  select(bacia, ordem, peso_g) %>%
+  filter(bacia == "Rio Guaporé") %>%
+  group_by(ordem) %>% 
+  summarise(
+    media_peso = mean(peso_g, na.rm = TRUE),
+    desvio = sd(peso_g, na.rm = TRUE),
+    cv = (desvio/media_peso)*100) %>%
+   arrange(media_peso)
+```
+
+
+**(a)** O coeficiente de variação é a mais adequada, pois a media do peso é diferente em cada ordem.
+
+
+**(b)** De acordo com a tabela, a ordem que possui uma distribuição de peso mais homogênea é a Clupeiformes.
+
+
+_**Questão 3**_ 
+
+
+```{r}
+peixes_rio %>%
+      mutate(
+      sexo_recode = recode(
+        sexo,
+        "Fêmea" = "Fêmea",
+        "fêmea" = "Fêmea",
+        "Macho" = "Macho",
+)) %>%
+   count(sexo_recode) %>%
+  summarise(
+    sexo_recode = sexo_recode,
+    frequência = n,
+    porcentagem = (n/49800)*100) %>%
+  filter(sexo_recode == "Macho" |sexo_recode == "Fêmea")
+```
+
+
+**(a)** Realizando a diferença entre a porcentagem de fêmeas pela porcentagem de macho, ou seja, 
+
+```{r}
+x <- 56.9
+y <- 43.1
+x-y
+```
+
+Então, a quantidade de machos que deve ser acrescentada para ficar igual a quantidade de fêmeas é de 13,8%.
+
+
+**(b)**
+
+```{r}
+peixes_rio %>%
+  group_by(peso_g)%>%
+    mutate(
+     sexo_recode = recode(
+        sexo,
+        "Fêmea" = "Fêmea",
+        "fêmea" = "Fêmea",
+        "Macho" = "Macho")) %>%
+  count(sexo_recode) %>%
+  summarise(
+    sexo_recode = sexo_recode,
+    frequência = n,
+    porcentagem = (n/49800)*100,
+    )%>%
+    arrange(desc(peso_g))%>%
+    filter(sexo_recode == "Macho" |sexo_recode == "Fêmea")
+```
+Observando esta nova tabela, na qual aparece o peso de cada peixe organizado de forma decrescente, é possível identificar que o peixe com o maior peso é Fêmea.
+
+
+_**Questão 4**_
+
+```{r}
+peixes_rio %>%
+  group_by(sexo, habito_alimentar)%>%
+    count(habito_alimentar)%>%
+    summarise(
+    habito_alimentar = habito_alimentar,
+    frequencia = n,
+    sexo = sexo
+    )
+```
+
+Pela tabela, é possível observar que a quantidade de Machos carnívoros é de 8552
+
+
+
+_**Questão 5**_
+
+```{r, message=FALSE}
+
+cheque <- read_csv("arquivos/brutos/contracheque.csv")
+
+cheque %>%
+  select(rendimento_liquido)%>%
+  arrange(desc(rendimento_liquido))
+```
+
+Analisando a tabela, é possível perceber que os valores estão organizados de forma decrescente, logo, o maior rendimento liquido é de aproximadamente 7.267.672
+
+
+
+_**Questão 6**_ 
+
+```{r}
+cheque %>%
+  select(rendimento_liquido)%>%
+  filter(rendimento_liquido > 39293.32) %>%
+  count()
+
+```
+Assim, há 37.334 magistrados que recebem acima de 39.293,32 reais
+
+
+**(a)**
+
+```{r}
+cheque %>%
+  select(rendimento_liquido)%>%
+  filter(rendimento_liquido > 100000.00) %>%
+  count()
+
+```
+Há 1136 magistrados que recebem acima de 100.000,00 reais
+
+
+**(b)**
+
+```{r}
+cheque %>%
+  select(rendimento_liquido, tribunal) %>%
+  group_by(tribunal) %>%
+  summarise(
+    media_rendimento = mean(rendimento_liquido, na.rm = TRUE),
+    desvio = sd(rendimento_liquido, na.rm = TRUE),
+    cv = (desvio/media_rendimento)*100) %>%
+  arrange(desc(cv))
+```
+
+
+Assim, é possível perceber que o tribunal que  tribunal que possui maior variabilidade é o Tribunal Regonal do Trabalho da 7ª Região do (CE), cheguei a esse resultando encontrando o coeficiente de variação que é igual ao desvio padrão do rendimento liquido dividido pela média desse rendimento e multiplicando por 100, como é possivel identificar no código acima.
+
+
+_**Questão 7**_
+
+**(a)** De acordo com o gráfico, o turno que apresenta a maior mediana das notas é a integral, pois, a linha dentro de cada caixa do gráfico é a mediana daquele respectivo conjunto de dados, sendo assim, a maior dentre as medianas apresentadas é a do turno integral.
+
+
+**(b)** 
+```{r, message=FALSE}
+
+cursos_prouni <- read_csv("arquivos/brutos/cursos_prouni.csv")
+
+cursos_prouni %>%
+  filter(turno == "Integral") %>%
+  group_by(turno)%>%
+    summarise(
+    media_nota = mean(nota_integral_ampla, na.rm = TRUE),
+    mediana_nota = median(nota_integral_ampla, na.rm = TRUE)) 
+```
+
+
+Segundo os resultados encontrados atraves do código acima, a média do turno integral é 663 e a mediana 658.
+
+
+
+**(c)** 
+```{r}
+cursos_prouni %>%
+  select(nota_integral_ampla, turno)%>%
+  group_by(turno) %>%
+  summarise(
+    media_nota = mean(nota_integral_ampla, na.rm = TRUE),
+    desvio = sd(nota_integral_ampla, na.rm = TRUE),
+    cv = (desvio/media_nota)*100)%>%
+  arrange(desc(cv))
+```
+
+Quanto maior o Coeficiente de variação (cv) menor é a homogeneidade, desta forma, o curso que possui uma menor homogeneidade na nota integral ampla é o **Curso a Distância**
+
+
+_**Questão 8**_ 
+
+```{r}
+cursos_prouni%>%
+  group_by(uf_busca)%>%
+  count()%>%
+  arrange(desc(n))
+```
+
+Segundo a tabela gerada pelo código acima, é possivel identificar que a Bahia (BA) ocupa a quinta posição na frequencia absoluta da variável uf_busca disposta de forma decescente.
+
+
+_**Questão 9**_
+
+```{r}
+cursos_prouni%>%
+  select(nome)%>%
+  distinct()
+```
+
+Segundo a tabela acima que apresenta os cursos distintos e possui 296 linhas, é possivel dizer que possui 296 cursos distintos na variável nome
+
+
+
+_**Questão 10**_
+
+Observando os gráficos, é possível perceber que não há valores extremos, os dados apresentados estão agrupados, tendo assim, uma distribuição simétrica, com isso a média seria uma otima médida de posição para servir de referencia para os dados apresentados nos gráfico.
